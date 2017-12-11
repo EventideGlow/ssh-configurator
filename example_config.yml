@@ -1,0 +1,16 @@
+---
+
+users:
+  alice: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZ36QoIhiCE21EIidBkQX3MKqMP2n0XOK3CfXzguJcqW6wjAVi55I3h/cQjbSvSnfljr0kq/Ut/5kGMw3suO88yPwNe16l4ga8wfyZyhURNtJYUhRcvMWLnIN5Q+WvrDltxKICozvYz71gGkmBnM/j5qAhUYEnU42NXDCoCw3++fMj/8fU2tvUOaybe3lxTGsTikNREn3aIdXuIt2BCck9GFycbWvdGFS9fUaTkj57waXu9DMSqETbuKdaPyGdEEbgbP7+dQnaSi2C9FJd1OPasVU3FJCiP3AWblhJWpf0TZO86uCUfD3Y/6JsGilJIw2i1PQ+rjA3P2NdW+jUV8MZ"
+  bob: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPQuKvUdq97MDBYY+SxnB2lI8J1/NlNdV6zwlnXG3+6nDdvlDPAkjrE+hGhlEykJaU13saFcHn/hPUhc1LdzWms/k5qOUufsWgUrShE9DWN8kxiHhSQg4JJKCVmMK9HCwN3X0B0RHEJIdYoLl6eJcf0U8qlNYE8HqpxJKzhx2/n2tB2N6Q0/URl0EtIb06ODRsVsXq80XggZdWgmcQK6teqa05jrkJOvsXGmKQ46kFt/3CvH3NYfyunucE2NxXsjIJtRkHUEymJLmfcHGaix5o5BDnVBa6aU9KLdn4ZFYOal917dB++C8w6tGm900H04/gZMb75SpIMv5IDPMMxq/l"
+  chris: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDpRNAKR1caZfv/CFeauzIWn9w1t1CTy0A/53/DxPHYqVmxmH/w4l+Sz8c4op5DTwcFOKL40cJ/c9DS1iizRgDPNMavd7IwW2zt/3DgQ5vJfERjBZCAJqiIGM/1tv+fjvv757lljSD0e9LewkymgPNuKJsqb7yicMecf1v1g6OJUz3J6b5hw4k57WcdHGD5Is7rBgyGTkdKviNhZGtkfDrr7hzy9F4Uc5sm0/lbVGnjsAiWoc7wo/y1xFhYM6VP1FVbzRm/3SGmk0KNkfqZXqlAzQgFhSb/b9Gcr2dnk0FK1fMJMUQWzA3H9W0T5Jy4o6B1bRHFDgdUp1qaDmpTPQnD"
+servers:
+  dot.example.com:
+    - "alice"
+    - "bob"
+  echo.example.com:
+    - "alice"
+    - "chris"
+  instance:
+    - "bob"
+    - "chris"

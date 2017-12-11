@@ -1,0 +1,112 @@
+---
+
+- name: Debug initial state
+  debug:
+    msg: "Servers: {{servers}} Users: {{users}}"
+  when: servers is defined and users is defined
+
+- name: Load vars
+  include_vars:
+    dir: "../vars"
+    extensions:
+      - json
+      - yml
+
+- name: Create record of 'Old users'
+  set_fact:
+    old_users: |
+      {% if servers is defined and ansible_hostname in servers -%}
+        {{servers[ansible_hostname]}}
+      {% else -%}
+        {{ [] }}
+      {%- endif %}
+
+- name: List old users
+  debug: var=old_users
+
+- name: Fail insecure downloads (if they exist)
+  fail:
+    msg: "Only HTTPS sources are supported for security reasons"
+  when: url is defined and "https" not in url
+
+- name: Download json vars
+  get_url:
+    url: "{{url}}"
+    dest: "../vars"
+  when: url is defined
+
+- name: Load (potentially new) vars
+  include_vars:
+    dir: "../vars"
+    extensions:
+      - json
+      - yml
+
+- name: Fail if needed variables undefined
+  fail:
+    msg: "Variable {{item}} is undefined"
+  when: item is not defined
+  with_items:
+    - servers
+    - users
+
+- name: Echo current host
+  debug:
+    msg: "CURRENT HOST IS: {{ansible_hostname}}"
+
+- name: Fail if current host is undefined in config
+  fail:
+    msg: "Current host is not in the config"
+  when: ansible_hostname not in servers
+
+- name: Set up list of new keys
+  set_fact:
+    keys_to_add: |
+      {% set res = [] -%}
+      {% for user in users -%}
+        {% if user in servers[ansible_hostname] -%}
+          {% set ignored = res.append({'name': user, 'key': users[user]}) -%}
+        {%- endif %}
+      {%- endfor %}
+      {{ res }}
+
+- name: Debug new keys
+  debug: var=keys_to_add
+
+- name: Set up list of keys to remove
+  set_fact:
+    keys_to_remove: |
+      {% set res = [] -%}
+      {% for user in users -%}
+        {% if user in servers[ansible_hostname] -%}
+          {}
+        {%- endif %}
+      {%- endfor %}
+      {{ res }}
+
+- name: Make sure we have a 'wheel' group
+  group:
+    name: wheel
+    state: present
+
+- name: Add users
+  user:
+    name: "{{item.name}}"
+    groups:
+      - wheel
+    state: present
+  with_items: "{{keys_to_add}}"
+
+- name: Add keys
+  authorized_key:
+    user: "{{item.name}}"
+    state: present
+    key: "{{item.key}}"
+    exclusive: yes
+  with_items: "{{keys_to_add}}"
+
+- name: Remove users we added before that no longer have perms
+  user:
+    name: "{{item}}"
+    state: absent
+  with_items: "{{old_users | difference(servers[ansible_hostname])}}"
